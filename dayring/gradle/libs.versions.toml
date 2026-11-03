@@ -1,0 +1,9 @@
+[versions]
+androidGradlePlugin = "9.0.0"
+wearComplications = "1.2.1"
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
+
+[libraries]
+wear-complications-data-source-ktx = { module = "androidx.wear.watchface:watchface-complications-data-source-ktx", version.ref = "wearComplications" }

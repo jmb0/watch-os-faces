@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">DayRing Kalender</string>
+    <string name="ring_label">Nächste 12 Stunden</string>
+    <string name="ring_description">%1$s Termine in den nächsten 12 Stunden</string>
+    <string name="needs_permission">Kalender erlauben</string>
+    <string name="setup_ok">Kalenderzugriff erlaubt. Deine Termine erscheinen jetzt am Rand von DayRing.</string>
+    <string name="setup_denied">Kein Kalenderzugriff. App erneut öffnen, um ihn zu erlauben.</string>
+    <string name="setup_blocked">Kein Kalenderzugriff. Erlaube ihn in den Einstellungen unter Berechtigungen.</string>
+    <string name="open_settings">Einstellungen öffnen</string>
+    <string name="next_event_label">Nächster Termin</string>
+    <string name="no_events">Keine Termine</string>
+    <string name="now">jetzt</string>
+    <string name="busy">Beschäftigt</string>
+    <string name="colors_calendar">Farben: Kalender</string>
+    <string name="colors_palette">Farben: Palette</string>
+</resources>

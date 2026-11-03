@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="watch_face_name">DayRing</string>
+    <string name="colors_label">Farbschema</string>
+    <string name="right_complication_label">Weltzeit</string>
+    <string name="bottom_complication_label">Nächster Termin</string>
+    <string name="ring_label">Termine</string>
+    <string name="steps_label">Schritte</string>
+    <string name="pulse_label">Puls</string>
+    <string name="temperature_label">Temperatur</string>
+    <string name="theme_one_label">Orange</string>
+    <string name="theme_two_label">Eisblau</string>
+    <string name="theme_three_label">Mint</string>
+    <string name="theme_four_label">Koralle</string>
+    <string name="theme_five_label">Gold</string>
+    <string name="icon_left_label">Symbol links</string>
+    <string name="icon_middle_label">Symbol Mitte</string>
+    <string name="icon_right_label">Symbol rechts</string>
+    <string name="icon_auto">Automatisch (Anbieter)</string>
+    <string name="icon_steps_opt">Schritte</string>
+    <string name="icon_heart_opt">Herz</string>
+    <string name="icon_thermo_opt">Thermometer</string>
+    <string name="icon_oxygen_opt">Sauerstoff</string>
+    <string name="icon_sleep_opt">Schlaf</string>
+    <string name="icon_flame_opt">Kalorien</string>
+</resources>

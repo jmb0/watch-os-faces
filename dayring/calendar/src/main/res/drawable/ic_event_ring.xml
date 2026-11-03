@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Watch face rim with one orange event segment -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:pathData="M12,3 A9,9 0 1,1 11.99,3"
+        android:strokeWidth="2"
+        android:strokeColor="#FF777777" />
+    <path
+        android:pathData="M12,3 A9,9 0 0,1 21,12"
+        android:strokeWidth="3"
+        android:strokeLineCap="round"
+        android:strokeColor="#FFFF8C00" />
+    <path
+        android:pathData="M12,12 L12,7 M12,12 L15,12"
+        android:strokeWidth="1.8"
+        android:strokeLineCap="round"
+        android:strokeColor="#FFFFFFFF" />
+</vector>
