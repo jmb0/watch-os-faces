@@ -1,9 +1,13 @@
 [versions]
 androidGradlePlugin = "9.0.0"
 wearComplications = "1.2.1"
+watchfacePush = "1.0.0"
+coroutines = "1.10.2"
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
 
 [libraries]
 wear-complications-data-source-ktx = { module = "androidx.wear.watchface:watchface-complications-data-source-ktx", version.ref = "wearComplications" }
+wear-watchfacepush = { module = "androidx.wear.watchfacepush:watchfacepush", version.ref = "watchfacePush" }
+kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }

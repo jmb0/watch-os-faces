@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">DayRing Kalender</string>
+    <string name="app_name">DayRing</string>
     <string name="ring_label">Nächste 12 Stunden</string>
     <string name="ring_description">%1$s Termine in den nächsten 12 Stunden</string>
     <string name="needs_permission">Kalender erlauben</string>
@@ -14,4 +14,8 @@
     <string name="busy">Beschäftigt</string>
     <string name="colors_calendar">Farben: Kalender</string>
     <string name="colors_palette">Farben: Palette</string>
+    <string name="face_activate">Als Zifferblatt verwenden</string>
+    <string name="face_active">DayRing ist dein Zifferblatt.</string>
+    <string name="face_hint">Um DayRing zu verwenden, halte das Zifferblatt gedrückt und wähle DayRing.</string>
+    <string name="face_missing">Das Zifferblatt DayRing konnte nicht installiert werden.</string>
 </resources>

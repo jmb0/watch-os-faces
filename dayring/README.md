@@ -24,18 +24,26 @@ thermometer, oxygen, sleep, calories).
 
 ## Modules
 
-- `watchface`: the watch face (`de.jmb0.dayring`). It contains no code, only
-  `res/raw/watchface.xml` and images.
-- `calendar`: companion app (`de.jmb0.dayring.calendar`). It provides the watch face with two
-  complications:
+- `watchface`: the watch face (`de.jmb0.dayring.calendar.watchfacepush.dayring`). It contains no
+  code, only `res/raw/watchface.xml` and images.
+- `calendar`: the app that is installed and published (`de.jmb0.dayring.calendar`, named
+  "DayRing"). It carries the watch face and provides it with two complications:
   - `EventRingService` draws the event rim as an image.
   - `NextEventService` provides the next event to start as text; one that is already running
     only if no other one starts within the 12 hours.
 
-Both apps must be installed. Open the companion app once to grant calendar access. Tapping the rim
-or the next event opens the watch's calendar app.
+The app installs the watch face with [Watch Face Push][wfp]: the build validates the watch face APK
+and puts it with its validation token into the app (`BundleWatchFaceTask` in
+`calendar/build.gradle.kts`), and Wear OS installs it together with the app. `WatchFaceInstaller`
+puts it back if it was removed and replaces it after an app update with a newer bundled version.
+Watch Face Push requires the package name of the watch face to start with the app's package name
+followed by `.watchfacepush.`.
 
-The button in the companion app switches the colours of the rim:
+Open the app once to grant calendar access. Its button **Use as watch face** makes DayRing the
+current watch face; Wear OS allows that only once, after that the watch face is chosen on the watch
+as usual. Tapping the rim or the next event opens the watch's calendar app.
+
+The colour button in the app switches the colours of the rim:
 
 - **Palette** (default): six fixed colours. The colour follows the start time (the next colour every
   quarter of an hour), so an event keeps its colour and events close together differ.
@@ -61,19 +69,22 @@ and lane width) and the dial ring in `watchface.xml` (on the outer lane).
 
 ## Privacy
 
-The companion app only reads calendar events (`READ_CALENDAR`) and processes them on the watch. It
+The app only reads calendar events (`READ_CALENDAR`) and processes them on the watch. It
 has no network access and passes nothing on. Steps, heart rate and everything else come from the
 providers you choose in the editor.
 
 ## Building
 
-Requirements: Android Studio with a current Android SDK (compileSdk 36), JDK 17 or newer.
+Requirements: Android Studio with a current Android SDK (compileSdk 36), JDK 17 or newer. The
+build loads the Watch Face Push validator from Google's Maven repository and one of its libraries
+from JitPack.
 
 ```shell
-./gradlew assembleDebug
+./gradlew :calendar:assembleDebug
 ```
 
-The APKs end up in `watchface/build/outputs/apk/debug/` and `calendar/build/outputs/apk/debug/`.
+This also builds the watch face (always its release build) and validates it; the build fails if the
+watch face does not pass the validation. The APK ends up in `calendar/build/outputs/apk/debug/`.
 Opening the project in Android Studio for the first time creates a `local.properties` with the SDK
 path; it does not belong in the repository.
 
@@ -82,13 +93,19 @@ debug key and is only meant for trying it out.
 
 ## Publishing
 
-Both apps go to Google Play as separate entries; texts for them are in
-[docs/store-listing.md](docs/store-listing.md), the privacy policy in [docs/privacy.md](docs/privacy.md).
+Only the app in `calendar` goes to Google Play, as one entry; it brings the watch face along. Texts
+for the entry are in [docs/store-listing.md](docs/store-listing.md), the privacy policy in
+[docs/privacy.md](docs/privacy.md).
 
-1. Create an upload key once and keep it (and a backup) outside the repository:
+1. Create two keys once and keep the keystore (and a backup) outside the repository: the upload
+   key for the app and, as Google recommends for Watch Face Push, a key of its own for the watch
+   face. Unlike the app, the watch face is not re-signed by Google Play, so this key signs every
+   future version of it.
 
    ```shell
-   keytool -genkeypair -v -keystore ~/keys/dayring-upload.jks -alias upload \
+   keytool -genkeypair -v -keystore ~/keys/dayring.jks -alias upload \
+       -keyalg RSA -keysize 4096 -validity 10000
+   keytool -genkeypair -v -keystore ~/keys/dayring.jks -alias watchface \
        -keyalg RSA -keysize 4096 -validity 10000
    ```
 
@@ -96,39 +113,43 @@ Both apps go to Google Play as separate entries; texts for them are in
    relative paths are resolved from the project root.
 
    ```properties
-   storeFile=/home/me/keys/dayring-upload.jks
+   storeFile=/home/me/keys/dayring.jks
    storePassword=...
    keyAlias=upload
    keyPassword=...
+   watchfaceKeyAlias=watchface
+   watchfaceKeyPassword=...
    ```
 
-3. Raise `versionCode` (and `versionName`) in the module's `build.gradle.kts` for every upload, then
-   build the bundles:
+3. Raise `versionCode` (and `versionName`) in `calendar/build.gradle.kts` for every upload. If the
+   watch face changed, raise its `versionCode` in `watchface/build.gradle.kts` too; otherwise
+   watches that already have it keep the old version. Then build the bundle:
 
    ```shell
-   ./gradlew :watchface:bundleRelease :calendar:bundleRelease
+   ./gradlew :calendar:bundleRelease
    ```
 
-   They end up in `watchface/build/outputs/bundle/release/` and `calendar/build/outputs/bundle/release/`.
+   It ends up in `calendar/build/outputs/bundle/release/`.
 
-4. In the Play Console, turn on Play App Signing for both apps and upload the bundles. The same
-   upload key can be used for both.
+4. In the Play Console, turn on Play App Signing and upload the bundle.
 
 ## Installing and trying it out
 
 The watch face needs Wear OS 6 (API 36). On a watch or in the emulator:
 
 ```shell
-adb install -r watchface/build/outputs/apk/debug/watchface-debug.apk
 adb install -r calendar/build/outputs/apk/debug/calendar-debug.apk
 adb shell pm grant de.jmb0.dayring.calendar android.permission.READ_CALENDAR
 ```
 
-In the emulator the watch face can be activated with ADB:
+Install only the app: it installs the watch face itself. A watch face installed separately with
+`adb install` under the same package name can get in the way; remove it first with
+`adb uninstall de.jmb0.dayring.calendar.watchfacepush.dayring`. Then open the app and tap
+**Use as watch face**, or activate it with ADB:
 
 ```shell
 adb shell am broadcast -a com.google.android.wearable.app.DEBUG_SURFACE \
-    --es operation set-watchface --es watchFaceId de.jmb0.dayring
+    --es operation set-watchface --es watchFaceId de.jmb0.dayring.calendar.watchfacepush.dayring
 ```
 
 The complication slots can be assigned with ADB too (`--es operation set-complication`, see the
@@ -147,7 +168,7 @@ adb shell content insert --uri content://com.android.calendar/events \
 ## Notes
 
 - On watches that do not store events themselves (for example Samsung), Wear OS mirrors them from
-  the phone into a calendar provider of its own. The companion app reads both sources.
+  the phone into a calendar provider of its own. The app reads both sources.
 - The icon of a slot is chosen in the editor because the format does not reveal which provider is
   assigned. "Automatic" shows the provider's own icon if it supplies one.
 - Coordinates and sizes in `watchface.xml` must be whole numbers. Decimal values in `x`, `y`,
@@ -161,5 +182,6 @@ Format ([android/wear-os-samples][samples], Apache 2.0). The Gradle files and th
 watch face still carry the original copyright notice from Google.
 
 [wff]: https://developer.android.com/training/wearables/wff
+[wfp]: https://developer.android.com/training/wearables/watch-face-push
 [wff-complications]: https://developer.android.com/training/wearables/wff/complications
 [samples]: https://github.com/android/wear-os-samples

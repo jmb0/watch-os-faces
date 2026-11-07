@@ -19,13 +19,15 @@ plugins {
     alias(libs.plugins.android.application)
 }
 
+// Not published on its own: the app in `calendar` carries this APK and installs it with
+// Watch Face Push, which requires the package name <app package>.watchfacepush.<name>.
 android {
     enableKotlin = false
-    namespace = "de.jmb0.dayring"
+    namespace = "de.jmb0.dayring.calendar.watchfacepush.dayring"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "de.jmb0.dayring"
+        applicationId = "de.jmb0.dayring.calendar.watchfacepush.dayring"
         minSdk = 36
         targetSdk = 36
         versionCode = 1
@@ -33,8 +35,8 @@ android {
     }
 
     // Release signing: reads keystore.properties in the project root (not in Git, see README).
-    // Without it the release build is signed with the debug key and is only for trying it out;
-    // Google Play rejects such a bundle.
+    // Google recommends a key of its own for watch faces installed by Watch Face Push.
+    // Without the file the release build is signed with the debug key, only for trying it out.
     signingConfigs {
         val keystore = rootProject.file("keystore.properties")
         if (keystore.exists()) {
@@ -42,14 +44,15 @@ android {
             create("release") {
                 storeFile = rootProject.file(props.getProperty("storeFile"))
                 storePassword = props.getProperty("storePassword")
-                keyAlias = props.getProperty("keyAlias")
-                keyPassword = props.getProperty("keyPassword")
+                keyAlias = props.getProperty("watchfaceKeyAlias")
+                keyPassword = props.getProperty("watchfaceKeyPassword")
             }
         }
     }
 
     buildTypes {
         debug {
+            // Strips the empty dex file; Watch Face Push rejects APKs with anything but resources.
             isMinifyEnabled = true
         }
         release {

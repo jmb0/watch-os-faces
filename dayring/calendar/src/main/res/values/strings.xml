@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">DayRing Calendar</string>
+    <string name="app_name">DayRing</string>
     <string name="ring_label">Next 12 hours</string>
     <string name="ring_description">%1$s appointments in the next 12 hours</string>
     <string name="needs_permission">Allow calendar</string>
@@ -14,4 +14,8 @@
     <string name="busy">Busy</string>
     <string name="colors_calendar">Colours: calendar</string>
     <string name="colors_palette">Colours: palette</string>
+    <string name="face_activate">Use as watch face</string>
+    <string name="face_active">DayRing is your watch face.</string>
+    <string name="face_hint">To use DayRing, touch and hold the watch face and choose DayRing.</string>
+    <string name="face_missing">The DayRing watch face could not be installed.</string>
 </resources>

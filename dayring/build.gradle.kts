@@ -14,6 +14,21 @@
  * limitations under the License.
  */
 
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+        // The Watch Face Push validator needs a library that is only on JitPack
+        maven("https://jitpack.io") {
+            content { includeGroup("com.github.xgouchet") }
+        }
+    }
+    dependencies {
+        // Used by calendar/build.gradle.kts to validate the bundled watch face
+        classpath("com.google.android.wearable.watchface.validator:validator-push:1.0.0-alpha10")
+    }
+}
+
 plugins {
     alias(libs.plugins.android.application) apply false
 }
