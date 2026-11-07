@@ -77,8 +77,42 @@ The APKs end up in `watchface/build/outputs/apk/debug/` and `calendar/build/outp
 Opening the project in Android Studio for the first time creates a `local.properties` with the SDK
 path; it does not belong in the repository.
 
-The release build is signed with the debug key and is only meant for trying it out. To publish,
-add your own `signingConfig` in `watchface/build.gradle.kts`.
+Without a `keystore.properties` (see [Publishing](#publishing)) the release build is signed with the
+debug key and is only meant for trying it out.
+
+## Publishing
+
+Both apps go to Google Play as separate entries; texts for them are in
+[docs/store-listing.md](docs/store-listing.md), the privacy policy in [docs/privacy.md](docs/privacy.md).
+
+1. Create an upload key once and keep it (and a backup) outside the repository:
+
+   ```shell
+   keytool -genkeypair -v -keystore ~/keys/dayring-upload.jks -alias upload \
+       -keyalg RSA -keysize 4096 -validity 10000
+   ```
+
+2. Create `keystore.properties` next to `settings.gradle.kts`. It is in `.gitignore`;
+   relative paths are resolved from the project root.
+
+   ```properties
+   storeFile=/home/me/keys/dayring-upload.jks
+   storePassword=...
+   keyAlias=upload
+   keyPassword=...
+   ```
+
+3. Raise `versionCode` (and `versionName`) in the module's `build.gradle.kts` for every upload, then
+   build the bundles:
+
+   ```shell
+   ./gradlew :watchface:bundleRelease :calendar:bundleRelease
+   ```
+
+   They end up in `watchface/build/outputs/bundle/release/` and `calendar/build/outputs/bundle/release/`.
+
+4. In the Play Console, turn on Play App Signing for both apps and upload the bundles. The same
+   upload key can be used for both.
 
 ## Installing and trying it out
 

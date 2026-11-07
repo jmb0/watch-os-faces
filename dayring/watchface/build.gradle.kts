@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
 }
@@ -25,9 +27,25 @@ android {
     defaultConfig {
         applicationId = "de.jmb0.dayring"
         minSdk = 36
-        targetSdk = 37
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0.0"
+    }
+
+    // Release signing: reads keystore.properties in the project root (not in Git, see README).
+    // Without it the release build is signed with the debug key and is only for trying it out;
+    // Google Play rejects such a bundle.
+    signingConfigs {
+        val keystore = rootProject.file("keystore.properties")
+        if (keystore.exists()) {
+            val props = Properties().apply { keystore.inputStream().use { load(it) } }
+            create("release") {
+                storeFile = rootProject.file(props.getProperty("storeFile"))
+                storePassword = props.getProperty("storePassword")
+                keyAlias = props.getProperty("keyAlias")
+                keyPassword = props.getProperty("keyPassword")
+            }
+        }
     }
 
     buildTypes {
@@ -35,14 +53,12 @@ android {
             isMinifyEnabled = true
         }
         release {
-            // Add your own signingConfig here to publish. Until then the release build is signed
-            // with the debug key and is only meant for trying it out.
             isMinifyEnabled = true
             // Ensure shrink resources is false, to avoid potential for them
             // being removed.
             isShrinkResources = false
 
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.findByName("release") ?: signingConfigs.getByName("debug")
         }
     }
 }

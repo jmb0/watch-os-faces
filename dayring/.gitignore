@@ -12,6 +12,7 @@ captures/
 # Signing
 *.jks
 *.keystore
+keystore.properties
 
 # Betriebssystem
 .DS_Store
